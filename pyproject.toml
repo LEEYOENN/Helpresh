@@ -1,0 +1,17 @@
+[project]
+name = "potenup-dl-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.5",
+    "numpy>=2.2.6",
+    "pandas>=2.3.2",
+    "scikit-learn>=1.7.1",
+    "streamlit>=1.48.1",
+    "tensorboard>=2.20.0",
+    "tensorboardx>=2.6.4",
+    "tqdm>=4.67.1",
+]
