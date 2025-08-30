@@ -140,7 +140,7 @@ def load_model():
 
     # ⚠️ 실제 환경에 맞는 가중치 경로로 교체하세요.
     # 예: "model/best_efficient_model_epoch12_weights.pth"
-    state = torch.load("model/best_efficient_model_epoch{epoch}_weights.pth", map_location="cpu")
+    state = torch.load("model/lr1e4_512best_efficientB0_model_pretrained_weights827.pth", map_location="cpu")
     model.load_state_dict(state)
 
     model.eval()
@@ -153,7 +153,7 @@ def load_model():
 def transform_image(image: Image.Image):
     image = ImageOps.exif_transpose(image).convert("RGB")
     transforms_test = transforms.Compose([
-        transforms.Resize((224, 224), antialias=True),
+        transforms.Resize((512, 512), antialias=True),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406],
                              [0.229, 0.224, 0.225])
