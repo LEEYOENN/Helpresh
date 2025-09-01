@@ -42,14 +42,15 @@ transforms_infer = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
 ])
-# 이미지 전처리 코드 그대로 붙여넣기
-
 
 # 상대방에게 전달할시 데이터 타입 정의
-class PredictResponse(BaseModel): # response_model=response 응답시 타입 정의
+class Predict(BaseModel): # response_model=response 응답시 타입 정의
     name: str
     score: float
     type: int
+
+class PredictResponse(BaseModel):
+    predictions: List[Predict]
 
 @app.post("/predict",response_model=PredictResponse)
 async def predict(file: UploadFile=File(...)):
@@ -68,15 +69,32 @@ async def predict(file: UploadFile=File(...)):
         pred = model(img_tensor)
         print('예측값: ',pred)
     
-    # 예측 결과 및 확률 계산
-    pred_result = torch.max(pred, dim=1)[1].item()
-    score_tensor = nn.Softmax(dim=1)(pred)[0]
-    score_value = score_tensor[pred_result].item()
-    print("Softmax: ",score_tensor)
-    name = CLASS_NAMES[pred_result]
-    print('name :',name)
+    # # 예측 결과 및 확률 계산
+    # pred_result = torch.max(pred, dim=1)[1].item()
+    # score_tensor = nn.Softmax(dim=1)(pred)[0]
+    # score_value = score_tensor[pred_result].item()
+    # print("Softmax: ",score_tensor)
+    # name = CLASS_NAMES[pred_result]
+    # print('name :',name)
 
-    return PredictResponse(name=name, score=score_value, type=pred_result) #score가 float 인줄 알았는데, list 였음. 그래서 float 값으로 변형해준것
+    #topk 개의 결과를 반환
+    #예측 결과 및 확률 계산
+    softmax_scores = torch.softmax(pred, dim=1)[0]
+
+    #torch.topk를 사용해 상위 3개 예측 결과 추출
+    topk_scores, topk_indices = torch.topk(softmax_scores, k=3)
+
+    #결과를 저장할 리스트
+    predictions = []
+
+    for i in range(3):
+        score_value = topk_scores[i].item()
+        pred_result = topk_indices[i].item()
+        name = CLASS_NAMES[pred_result]
+        predictions.append(Predict(name=name, score=score_value, type=pred_result))
+
+    return PredictResponse(predictions=predictions)
+    # return PredictResponse(name=name, score=score_value, type=pred_result) #score가 float 인줄 알았는데, list 였음. 그래서 float 값으로 변형해준것
 
 
 

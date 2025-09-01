@@ -2275,6 +2275,7 @@ name = "potenup-dl-project"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "altair" },
     { name = "fastapi" },
     { name = "grad-cam" },
     { name = "jupyter" },
@@ -2295,6 +2296,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "altair", specifier = ">=5.5.0" },
     { name = "fastapi", specifier = ">=0.116.1" },
     { name = "grad-cam", specifier = ">=1.5.5" },
     { name = "jupyter", specifier = ">=1.1.1" },
